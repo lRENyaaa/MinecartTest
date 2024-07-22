@@ -66,7 +66,7 @@ public class SuperMinecart {
         }
 
         updateMoveLocation(event.getFrom(), event.getTo());
-        handlePreviousMinecartMove();
+        handleAllPreviousMinecartMove();
 
         if (!handle.ci()) {
             if (leastUnDerailMoveLocation == null) return;
@@ -85,18 +85,29 @@ public class SuperMinecart {
             previousSuperMinecart.nextSuperMinecart = this.nextSuperMinecart;
             previousSuperMinecart.updateMaxSpeed();
         }
+
+        if (nextSuperMinecart != null) {
+            nextSuperMinecart.previousSuperMinecart = this.previousSuperMinecart;
+            nextSuperMinecart.updateMaxSpeed();
+        }
     }
 
     public void setPreviousSuperMinecart(SuperMinecart superMinecart) {
-        if (superMinecart.equals(nextSuperMinecart)) return;
-        if (this.equals(superMinecart.nextSuperMinecart)) return;
+        if (isInMinecartChain(superMinecart)) return;
         this.previousSuperMinecart = superMinecart;
         superMinecart.nextSuperMinecart = this;
         superMinecart.updateMaxSpeed();
     }
 
+    private void handleAllPreviousMinecartMove(){
+        SuperMinecart previousSuperMinecart = this.previousSuperMinecart;
+        while (previousSuperMinecart != null){
+            previousSuperMinecart.handlePreviousMinecartMove();
+            previousSuperMinecart = previousSuperMinecart.previousSuperMinecart;
+        }
+    }
+
     private void handlePreviousMinecartMove(){
-        if (previousSuperMinecart == null) return;
         MoveLocation moveLocation = moveLocationList[moveLocationList.length - 1];
 
         if (moveLocation == null) return;
@@ -106,8 +117,6 @@ public class SuperMinecart {
             previousSuperMinecart.handle.a_(to.getX(), to.getY(), to.getZ());
         }
         previousSuperMinecart.updateMoveLocation(moveLocation.getFrom(), to);
-
-        previousSuperMinecart.handlePreviousMinecartMove();
     }
 
     private void move(){
@@ -167,6 +176,23 @@ public class SuperMinecart {
     private Location getLocation(){
         return CraftLocation.toBukkit(handle.dn(), handle.dP().getWorld(), handle.getBukkitYaw(), handle.dH());
     }
+
+    private boolean isInMinecartChain(SuperMinecart superMinecart){
+        SuperMinecart nextSuperMinecart = this.nextSuperMinecart;
+        while (nextSuperMinecart != null){
+            if (nextSuperMinecart.equals(superMinecart)) return true;
+            nextSuperMinecart = nextSuperMinecart.nextSuperMinecart;
+        }
+
+        SuperMinecart previousSuperMinecart = this.previousSuperMinecart;
+        while (previousSuperMinecart != null){
+            if (previousSuperMinecart.equals(superMinecart)) return true;
+            previousSuperMinecart = previousSuperMinecart.previousSuperMinecart;
+        }
+
+        return false;
+    }
+
 
 
 }
