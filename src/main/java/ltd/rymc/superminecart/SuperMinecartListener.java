@@ -32,7 +32,7 @@ public class SuperMinecartListener implements Listener {
         if (manager.getSuperMinecart(handle) != null) return;
 
         SuperMinecart superMinecart = new SuperMinecart(((CraftMinecart) minecart).getHandle());
-        manager.newMinecart(superMinecart);
+        manager.add(superMinecart);
 
     }
 
@@ -46,7 +46,7 @@ public class SuperMinecartListener implements Listener {
             if (manager.getSuperMinecart(handle) != null) return;
 
             SuperMinecart superMinecart = new SuperMinecart(handle);
-            manager.newMinecart(superMinecart);
+            manager.add(superMinecart);
         }
     }
 
@@ -94,6 +94,11 @@ public class SuperMinecartListener implements Listener {
         SuperMinecart from = toSuperMinecart(oFrom);
         SuperMinecart to = toSuperMinecart(oTo);
         if (from == null || to == null) return;
+
+        if (from.isInMinecartChain(to)){
+            event.setCancelled(true);
+            return;
+        }
 
         if (to.hasPreviousMinecart() || from.hasNextMinecart()) return;
         to.setPreviousSuperMinecart(from);

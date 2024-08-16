@@ -33,7 +33,6 @@ public class SuperMinecart {
 
     private final MoveLocation[] moveLocationList = new MoveLocation[SIZE];
     private Location previousLocation = null;
-    private int yState = 0;
 
     private MoveLocation leastUnDerailMoveLocation = null;
 
@@ -102,21 +101,22 @@ public class SuperMinecart {
     private void handleAllPreviousMinecartMove(){
         SuperMinecart previousSuperMinecart = this.previousSuperMinecart;
         while (previousSuperMinecart != null){
-            previousSuperMinecart.handlePreviousMinecartMove();
+            previousSuperMinecart.previousMove();
             previousSuperMinecart = previousSuperMinecart.previousSuperMinecart;
         }
     }
 
-    private void handlePreviousMinecartMove(){
-        MoveLocation moveLocation = moveLocationList[moveLocationList.length - 1];
+    private void previousMove(){
+        MoveLocation moveLocation = nextSuperMinecart.moveLocationList[moveLocationList.length - 1];
 
         if (moveLocation == null) return;
         Location to = moveLocation.getTo();
         double distance = new MoveLocation(getLocation(), to).getVec3D().f();
-        if (distance > 0.8) {
-            previousSuperMinecart.handle.a_(to.getX(), to.getY(), to.getZ());
+        if (distance > 1.1) {
+            handle.a_(to.getX(), to.getY(), to.getZ());
+            updateMoveLocation(moveLocation.getFrom(), to);
         }
-        previousSuperMinecart.updateMoveLocation(moveLocation.getFrom(), to);
+
     }
 
     private void move(){
@@ -145,7 +145,7 @@ public class SuperMinecart {
         Location to = getLocation();
         updateMoveLocation(previousLocation, to);
 
-        handlePreviousMinecartMove();
+        handleAllPreviousMinecartMove();
     }
 
     private boolean passengersContainsPlayer(){
@@ -177,7 +177,7 @@ public class SuperMinecart {
         return CraftLocation.toBukkit(handle.dn(), handle.dP().getWorld(), handle.getBukkitYaw(), handle.dH());
     }
 
-    private boolean isInMinecartChain(SuperMinecart superMinecart){
+    public boolean isInMinecartChain(SuperMinecart superMinecart){
         SuperMinecart nextSuperMinecart = this.nextSuperMinecart;
         while (nextSuperMinecart != null){
             if (nextSuperMinecart.equals(superMinecart)) return true;

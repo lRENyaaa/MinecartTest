@@ -1,6 +1,0 @@
-name: MinecartTest
-version: '1.0.0'
-main: ltd.rymc.minecarttest.MinecartTest
-api-version: '1.13'
-folia-supported: true
-

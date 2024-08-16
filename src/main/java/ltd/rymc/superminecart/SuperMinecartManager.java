@@ -1,6 +1,5 @@
 package ltd.rymc.superminecart;
 
-import ltd.rymc.minecarttest.MinecartTest;
 import net.minecraft.world.entity.vehicle.EntityMinecartAbstract;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -21,7 +20,7 @@ public class SuperMinecartManager {
         Bukkit.getPluginManager().registerEvents(listener, plugin);
     }
 
-    void newMinecart(SuperMinecart minecart){
+    void add(SuperMinecart minecart){
         minecarts.add(minecart);
     }
 
@@ -33,7 +32,7 @@ public class SuperMinecartManager {
         return null;
     }
 
-    public void remove(SuperMinecart superMinecart){
+    void remove(SuperMinecart superMinecart){
         minecarts.remove(superMinecart);
         superMinecart.remove();
     }
